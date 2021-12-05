@@ -2,17 +2,20 @@ inputFile = 'source/day2.txt'
 with open(inputFile) as f:
   horizontal = 0
   depth = 0
+  aim = 0
 
   for line in f.readlines():
     tokens = line[:-1].split(' ')
     assert len(tokens) == 2, f"only command and length allowed: {line}"
     com, length = tokens
+    length = int(length)
     if com == "forward":
-      horizontal += int(length)
+      horizontal += length
+      depth += length * aim
     elif com == "down":
-      depth += int(length)
+      aim += length
     elif com == "up":
-      depth -= int(length)
+      aim -= length
     else: 
       raise Exception("Unknown command")
     
