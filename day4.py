@@ -22,16 +22,25 @@ def task1():
     
     boards.append(board)
 
+    last_sum = None
     # loop all target number in sequence
     for target in sequence:
-      boards = [ [( -1000 if ((num > 0) and (num == target)) else num ) for num in board] for board in boards ]
+      boards = [ [( -1000 if ((num >= 0) and (num == target)) else num ) for num in board] for board in boards ]
+      
+      winningBoards = checkBoardsWin(boards, target)
+      this_last_sum = None
+      for boardIndex in sorted(winningBoards.keys(), reverse=True):
+        temp_sum = winningBoards[boardIndex]
+        print(boardIndex, temp_sum)
+        if this_last_sum is None: this_last_sum = temp_sum
+        del boards[boardIndex]
 
-      sum = checkBoardsWin(boards, target)
-      if sum: return sum
+      if len(winningBoards) > 0: last_sum = this_last_sum
 
-    return None
+    return last_sum
 
 def checkBoardsWin(boards, target, boardLength = 5):
+  winningBoards = {}
   for k, board in enumerate(boards):
     for i in range(boardLength):
       checkingLines = [
@@ -41,19 +50,14 @@ def checkBoardsWin(boards, target, boardLength = 5):
 
       for line in checkingLines:
         lineWinScore = checkLineWin(line, board, target, k)
-        if lineWinScore: return lineWinScore
-
-  return None
+        if lineWinScore: 
+          winningBoards[k] = lineWinScore
+      
+  return winningBoards
 
 def checkLineWin(line, board, target, k):
-  # print(line)
-  # if all(map(lambda n: n == 0, line)):
-    # s = sum(board)
   if all(map(lambda n: n == -1000, line)):
     s = sum(map(lambda n: n if n > 0 else 0, board))
-
-    printBoard(board)
-    print(target, k)
     return target * s
   return None 
 
